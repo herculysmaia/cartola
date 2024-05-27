@@ -1,9 +1,27 @@
-use iced::widget::{Column, Container, TextInput};
+mod app {
+    pub mod gerenciamento {
+        pub mod cadastro;
+    }
+}
+use app::gerenciamento::cadastro::TelaDeCadastro;
+
+use iced::widget::Container;
 use iced::Length;
 use iced::{executor, Application, Command, Element, Settings, Theme};
 
 struct CartolaApp {
-    query: String,
+    tela: Telas,
+    query: TelaDeCadastro,
+}
+
+#[derive(Debug, Clone, Copy)]
+enum Telas {
+    Gerenciamento(TelaDeGerencia),
+}
+
+#[derive(Debug, Clone, Copy)]
+enum TelaDeGerencia {
+    Cadastro,
 }
 
 #[derive(Debug, Clone)]
@@ -18,10 +36,13 @@ impl Application for CartolaApp {
     type Message = Message;
 
     fn new(_flags: Self::Flags) -> (Self, iced::Command<Self::Message>) {
-        let app = Self {
-            query: String::new(),
-        };
-        (app, Command::none())
+        (
+            Self {
+                query: TelaDeCadastro::new(),
+                tela: Telas::Gerenciamento(TelaDeGerencia::Cadastro),
+            },
+            Command::none(),
+        )
     }
 
     fn title(&self) -> String {
@@ -31,22 +52,20 @@ impl Application for CartolaApp {
     fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
         match message {
             Message::TextInputChanged(input) => {
-                self.query = input;
+                self.query.update_query(input);
             }
         }
         Command::none()
     }
 
     fn view(&self) -> Element<Self::Message> {
-        let input = TextInput::new("hover", &self.query)
-            .on_input(Message::TextInputChanged)
-            .padding(10);
-
-        let content = Column::new().push(input).spacing(20);
+        let content = match self.tela {
+            Telas::Gerenciamento(TelaDeGerencia::Cadastro) => self.query.view(),
+        };
 
         Container::new(content)
             .width(Length::Fill)
-            .center_x()
+            .height(Length::Fill)
             .into()
     }
 }
