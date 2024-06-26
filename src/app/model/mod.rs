@@ -6,6 +6,8 @@ pub mod home;
 use gerencia::{MsgGerencia, TelaGerencia};
 use home::MsgHome;
 
+use serde::{Deserialize, Serialize};
+
 // Dados principais da aplicação
 #[derive(Debug)]
 pub struct AppData {
@@ -24,4 +26,20 @@ pub enum Tela {
 pub enum MsgPrincipal {
     MsgHome(MsgHome),
     MsgGerencia(MsgGerencia),
+}
+
+// Dodos de retorno da API
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DataTime {
+    pub nome_cartola: String,
+    pub slug: String,
+    url_escudo_png: String,
+    pub url_escudo_svg: String,
+    pub foto_perfil: String,
+    pub nome: String,
+    facebook_id: Option<u64>,
+    pub time_id: u64,
+    assinante: bool,
+    lgpd_removido: bool,
+    lgpd_quarentena: bool,
 }
